@@ -111,10 +111,16 @@ spec:
           value: go-demo-5
         - name: KUBERNETES_MONGO_SERVICE_NAME
           value: db
-      volumes:
-        - name: mongo-data
-          persistentVolumeClaim:
-            claimName: mongo-data
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: do-block-storage
 ---
 
 apiVersion: v1

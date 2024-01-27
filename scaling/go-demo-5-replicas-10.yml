@@ -37,7 +37,7 @@ metadata:
 ---
 
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: db
   namespace: go-demo-5
@@ -48,7 +48,7 @@ rules:
 
 ---
 
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: db
@@ -118,15 +118,15 @@ spec:
             memory: "50Mi"
             cpu: 0.1
   volumeClaimTemplates:
-  - metadata:
-      name: mongo-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 2Gi
-
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: do-block-storage
 ---
 
 apiVersion: v1
@@ -143,7 +143,7 @@ spec:
 
 ---
 
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: db
@@ -159,11 +159,15 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 80
+      target:
+        type: Utilization
+        averageUtilization: 100
   - type: Resource
     resource:
       name: memory
-      targetAverageUtilization: 80
+      target:
+        type: Utilization
+        averageUtilization: 100
 
 ---
 
@@ -220,7 +224,7 @@ spec:
 
 ---
 
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: api
@@ -236,8 +240,12 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 80
+      target:
+        type: Utilization
+        averageUtilization: 100
   - type: Resource
     resource:
       name: memory
-      targetAverageUtilization: 80
+      target:
+        type: Utilization
+        averageUtilization: 100
